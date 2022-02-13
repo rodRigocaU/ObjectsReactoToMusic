@@ -10,14 +10,18 @@ public class AudioControl : MonoBehaviour
     private int lenght = 1024;
 
     public float clipSound;
+    public float clipSoundForWheels;
     private float[] clipSam;
 
 
     public GameObject[] spectreObjects;
     public float sizeFacto = 1;
+    public float wheelFactor = 1;
 
     public float minSize = 0;
     public float maxSize = 500;
+
+    public GameObject[] wheelsObjects;
 
 
     private void Awake()
@@ -37,6 +41,7 @@ public class AudioControl : MonoBehaviour
             foreach(var sample in clipSam)
             {
                 clipSound += Mathf.Abs(sample);
+                clipSoundForWheels += Mathf.Abs(sample);
             }
 
             clipSound /= lenght;
@@ -44,10 +49,20 @@ public class AudioControl : MonoBehaviour
             clipSound *= sizeFacto;
             clipSound = Mathf.Clamp(clipSound, minSize, maxSize);
 
-            foreach(var gameOb in spectreObjects)
+            clipSoundForWheels /= lenght;
+            clipSoundForWheels *= wheelFactor;
+            clipSoundForWheels = Mathf.Clamp(clipSoundForWheels, 1f, maxSize);
+
+            foreach (var gameOb in spectreObjects)
             {
                 gameOb.transform.localScale = new Vector3(clipSound, clipSound, clipSound);
             }
+
+            foreach (var gameOb in wheelsObjects)
+            {
+                gameOb.transform.localScale = new Vector3(clipSoundForWheels, clipSoundForWheels, clipSoundForWheels);
+            }
+
 
         }
     }
