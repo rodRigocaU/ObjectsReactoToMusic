@@ -19,6 +19,7 @@ public class carController : MonoBehaviour
     private float timer = 0.0f;
     private float timer2 = 0.0f;
     private bool i_Fall = false;
+    private bool i_crash = false;
     private GameObject car;
  
 
@@ -73,7 +74,7 @@ public class carController : MonoBehaviour
         {
            timer += Time.deltaTime;
             contador = (int)(timer % 60);
-            Debug.Log("Este es el timer" + timer + " SEG: " + contador);
+            //Debug.Log("Este es el timer" + timer + " SEG: " + contador);
            if(contador == 4)
             {
                 flagBreak = false;
@@ -81,24 +82,34 @@ public class carController : MonoBehaviour
                 motorForce = 850;
             }
         }
-
-        if(!i_Fall)
+        bool not_fall = !i_Fall;
+        bool not_crash = !i_crash;
+        if(not_fall && not_crash)
         {
             GetInput();
             HandleMotor();
             HandleSteering();
             UpdateWheels();
         }
-        else
+        else if(i_Fall && not_crash)
         {
             Debug.Log("Entre");
             i_Fall = false;
             Vector3 pos;
-            pos = new Vector3(positionXC, positionYC + 5, positionZC);
+            pos = new Vector3(positionXC, positionYC + 3, positionZC);
             car.transform.position = pos;
-            
-            car.transform.rotation = new Quaternion(0.0f, 0.0f, 0.0f,0.0f);
 
+            car.transform.rotation = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+        }
+        else if(not_fall && i_crash)
+        {
+            Debug.Log("CHOQUE");
+            i_crash = false;
+            Vector3 pos;
+            pos = new Vector3(-127.5339f, 4.31f, 32.63526f);
+            car.transform.position = pos;
+
+            car.transform.rotation = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
         }
 
     }
@@ -195,6 +206,11 @@ public class carController : MonoBehaviour
         {
             Debug.Log("LIMIT REACH");
             i_Fall = true;
+        }
+        else if(other.tag == "FinalWall")
+        {
+            Debug.Log("PARED DEL FINAL");
+            i_crash = true;
         }
     }
 }
